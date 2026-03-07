@@ -1,33 +1,54 @@
 # frozen_string_literal: true
 
+# look up records in CSV data and flag duplicates
+
 require 'csv'
 
-# pre process
-## 0: header (or duplication)
-## 1: data
+def store_data_location(data:, key_index:)
+  data_location = {}
 
-csv_file_name = 'sample.csv'
-csv = CSV.read(csv_file_name, headers: true)
+  data.each.with_index do |element, index|
+    key = element[key_index].to_s
 
-headers = csv.headers
-headers_hash = headers.each.with_index.to_h
+    # index = 0: duplicated
+    index = 0 if data_location.key?(key)
+    data_location.store(key, index)
+  end
+  data_location
+end
 
-rows = headers + csv.map(&:fields)
-data_location = {}
-rows.each.with_index do |element, index|
-  key = 'id'
-  key_column = headers_hash[key]
-  target = element[key_column].to_s
-  if data_location.key?(target)
-    data_location.store(target, 0)
-  else
-    data_location.store(target, index)
+# pre processing
+def search_data_location(csv_file_path: 'sample.csv', target_key: 'id')
+  csv_data_arr = CSV.read(csv_file_path)
+
+  # key column index number
+  headers = csv_data_arr.first
+  headers_hash = headers.each.with_index.to_h #=> {'id' => 0, 'name' => 1, ...}
+  key_column_index_number = headers_hash[target_key]
+
+  store_data_location(data: csv_data_arr, key_index: key_column_index_number)
+end
+
+def main
+  # search preparation
+  ## find the index beforehand
+  data_index = search_data_location(csv_file_path: 'sample.csv', target_key: 'email')
+  ## load the CSV data into memory and assign it to a variable.
+  csv_data_arr = CSV.read('sample.csv')
+
+  # example: search
+  puts '=== SEARCH ==='
+  keys_for_search = ['john@example.com', 'ken@example.com', 'maria@example.com']
+  keys_for_search.each do |key_for_search|
+    location_index = data_index[key_for_search]
+    if location_index.eql?(0)
+      # TODO: modify as needed
+      p "#{key_for_search} is duplicated."
+    else
+      # TODO: modify as needed
+      p csv_data_arr[location_index]
+    end
   end
 end
 
-# search
-keywords = %w[1 3 4]
-keywords.each do |target_key|
-  location_index = data_location[target_key]
-  p rows[location_index]
-end
+main if __FILE__ == $PROGRAM_NAME
