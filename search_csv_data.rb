@@ -1,19 +1,21 @@
-require "csv"
+# frozen_string_literal: true
+
+require 'csv'
 
 # pre process
-## 1: header (or duplication)
-## 2: data
+## 0: header (or duplication)
+## 1: data
 
-csv_file_name = "sample.csv"
+csv_file_name = 'sample.csv'
 csv = CSV.read(csv_file_name, headers: true)
 
 headers = csv.headers
 headers_hash = headers.each.with_index.to_h
 
 rows = headers + csv.map(&:fields)
-data_location= {}
+data_location = {}
 rows.each.with_index do |element, index|
-  key = "id"
+  key = 'id'
   key_column = headers_hash[key]
   target = element[key_column].to_s
   if data_location.key?(target)
@@ -24,7 +26,7 @@ rows.each.with_index do |element, index|
 end
 
 # search
-keywords = ["1","3","4"]
+keywords = %w[1 3 4]
 keywords.each do |target_key|
   location_index = data_location[target_key]
   p rows[location_index]
