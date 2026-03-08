@@ -28,7 +28,7 @@ end
 # @param target_key [String] The key to use for lookup
 # @return [Hash<String, Integer>] A hash mapping each unique key to its index in the data
 def search_data_location(csv_file_path: 'sample.csv',
-target_key: 'id')
+                         target_key: 'id')
   csv_data_arr = CSV.read(csv_file_path)
 
   # key column index number
