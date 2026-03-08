@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
-# look up records in CSV data and flag duplicates
+# Look up records in CSV data and flag duplicates
 
 require 'csv'
 
+# Store the location of each unique key in the data
+#
+# @param data [Array<Array<String>>] The data to search through
+# @param key_index [Integer] The index of the key to use for lookup
+# @return [Hash<String, Integer>] A hash mapping each unique key to its index in the data
 def store_data_location(data:, key_index:)
   data_location = {}
 
@@ -17,8 +22,13 @@ def store_data_location(data:, key_index:)
   data_location
 end
 
-# pre processing
-def search_data_location(csv_file_path: 'sample.csv', target_key: 'id')
+# Search for the location of each unique key in the data
+#
+# @param csv_file_path [String] The path to the CSV file to search
+# @param target_key [String] The key to use for lookup
+# @return [Hash<String, Integer>] A hash mapping each unique key to its index in the data
+def search_data_location(csv_file_path: 'sample.csv',
+target_key: 'id')
   csv_data_arr = CSV.read(csv_file_path)
 
   # key column index number
